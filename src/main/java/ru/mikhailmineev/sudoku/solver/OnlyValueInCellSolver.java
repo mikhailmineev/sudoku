@@ -1,34 +1,37 @@
 package ru.mikhailmineev.sudoku.solver;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.UnaryOperator;
-
 import ru.mikhailmineev.sudoku.Point;
 import ru.mikhailmineev.sudoku.Sudoku;
 import ru.mikhailmineev.sudoku.exception.SudokuUnsolvableException;
-import ru.mikhailmineev.sudoku.exception.SudokuValidationException;
 
-public class OnlyValueInCellSolver implements UnaryOperator<Sudoku> {
+public class OnlyValueInCellSolver implements Solver {
+
+    private int deep;
 
     @Override
     public Sudoku apply(Sudoku sudoku) {
+	deep = 0;
+	return applyImpl(sudoku);
+    }
+
+    @Override
+    public int getDeep() {
+	return deep;
+    }
+
+    private Sudoku applyImpl(Sudoku sudoku) {
+	deep++;
 	List<Point> points = sudoku.getFreePoints();
 	if (points.isEmpty()) {
+	    // DEBUG System.out.println(String.format("Solved"));
 	    return sudoku;
 	}
 	for (Point point : points) {
-	    List<Sudoku> possibles = new ArrayList<>();
-	    for (byte value = 1; value <= sudoku.getSize(); value++) {
-		try {
-		    Sudoku possible = sudoku.offer(point, value);
-		    possibles.add(possible);
-		} catch (SudokuValidationException e) {
-		    continue;
-		}
-	    }
+	    List<Byte> possibles = sudoku.possibleValues(point);
 	    if (possibles.size() == 1) {
-		return apply(possibles.get(0));
+		// DEBUG System.out.println(String.format("Found solution %d at %s", possibles.get(0), point));
+		return applyImpl(sudoku.offer(point, possibles.get(0)));
 	    }
 	}
 	throw new SudokuUnsolvableException(sudoku);

@@ -48,12 +48,7 @@ public class Sudoku {
     }
 
     public Sudoku offer(int row, int column, byte value) {
-	if (row < 0 || row >= size) {
-	    throw new IllegalArgumentException("row can be from 0 to " + (size - 1));
-	}
-	if (column < 0 || column >= size) {
-	    throw new IllegalArgumentException("column can be from 0 to " + (size - 1));
-	}
+	checkPointLimits(row, column);
 	if (value < 1 || value > size) {
 	    throw new IllegalArgumentException(String.format("value can be from 1 to %d, actual is %d", size, value));
 	}
@@ -80,6 +75,22 @@ public class Sudoku {
 	    }
 	}
 	return result;
+    }
+
+    public List<Byte> possibleValues(Point point) {
+	return possibleValues(point.getRow(), point.getColumn());
+    }
+
+    public List<Byte> possibleValues(int row, int column) {
+	checkPointLimits(row, column);
+
+	List<Byte> possible = new ArrayList<>();
+	for (byte value = 1; value <= size; value++) {
+	    if (validate(row, column, value)) {
+		possible.add(value);
+	    }
+	}
+	return possible;
     }
 
     public int getSize() {
@@ -131,6 +142,15 @@ public class Sudoku {
 	    return true;
 	}
 	return rule.validate(matrix, size, row, column, value);
+    }
+
+    private void checkPointLimits(int row, int column) {
+	if (row < 0 || row >= size) {
+	    throw new IllegalArgumentException("row can be from 0 to " + (size - 1));
+	}
+	if (column < 0 || column >= size) {
+	    throw new IllegalArgumentException("column can be from 0 to " + (size - 1));
+	}
     }
 
     private static byte[][] deepCopy(byte[][] array) {
