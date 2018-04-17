@@ -28,7 +28,6 @@ public class SudokuCmd {
 	    new CrossUniqueRule());
     private static final Solver solver = new OnlyValueInCellSolver();
     private static final ObjectMapper jsonMapper = new ObjectMapper();
-    private static final long[] seeds = { 123L, 423423424234L, 432234L, 454353L };
 
     public static void main(String... args) {
 	if (args.length != 1) {
@@ -51,10 +50,13 @@ public class SudokuCmd {
 	randoms.add(s -> new Normal(s, 0, 1));
 	randoms.add(s -> new Exponential(s, 1));
 
-	for (Function<Long, Random> random : randoms) {
-	    Statistics statistics = new Statistics();
+	long[] seeds = { 123L, 423423424234L, 432234L, 454353L };
+
+	for (Function<Long, Random> randomProvider : randoms) {
+	    Statistics statistics = new Statistics(randomProvider.apply(0L).getClass().getSimpleName());
 	    for (long seed : seeds) {
-		MultipleSolver multipleSolver = new RandomSolutionSolver(solver, random.apply(seed));
+		Random random = randomProvider.apply(seed);
+		MultipleSolver multipleSolver = new RandomSolutionSolver(solver, random);
 
 		long start = System.currentTimeMillis();
 		Solutions solved = multipleSolver.apply(sudoku);

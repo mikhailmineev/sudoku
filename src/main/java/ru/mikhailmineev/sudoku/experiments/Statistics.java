@@ -7,6 +7,11 @@ public class Statistics {
     private LongSummaryStatistics unsolvables = new LongSummaryStatistics();
     private LongSummaryStatistics nodes = new LongSummaryStatistics();
     private LongSummaryStatistics leaves = new LongSummaryStatistics();
+    private String name;
+
+    public Statistics(String name) {
+	this.name = name;
+    }
 
     public void add(long executionTime, long unsolvables, long nodes, long leaves) {
 	this.executionTime.accept(executionTime);
@@ -16,11 +21,11 @@ public class Statistics {
     }
 
     public void print() {
-	log("Statistics:");
-	log("Execution time: %fms", executionTime.getAverage());
-	log("Unsolvable situations (branches with > 1 child): %f", unsolvables.getAverage());
-	log("Nodes: %f", nodes.getAverage());
-	log("Leaves: %f", leaves.getAverage());
+	log("Statistics of %s:", name);
+	log("Execution time: \t\t\t%fms", executionTime.getAverage());
+	log("Unsolvables (branches with > 1 child): \t%f", unsolvables.getAverage());
+	log("Nodes: \t\t\t\t\t%f", nodes.getAverage());
+	log("Leaves: \t\t\t\t%f", leaves.getAverage());
     }
 
     private static void log(String format, Object... args) {
