@@ -7,12 +7,12 @@ import java.util.Set;
 
 import ru.mikhailmineev.sudoku.Sudoku;
 
-public class MultipleSolutionSolutions {
+public class Solutions {
 
     private List<Sudoku> list = new ArrayList<>();
     private Set<Sudoku> set = new HashSet<>();
 
-    public MultipleSolutionSolutions() {
+    public Solutions() {
     }
 
     public void add(Sudoku sudoku) {
@@ -20,12 +20,16 @@ public class MultipleSolutionSolutions {
 	set.add(sudoku);
     }
 
-    public void merge(MultipleSolutionSolutions sudokus) {
+    public void merge(Solutions sudokus) {
 	list.addAll(sudokus.list);
 	set.addAll(sudokus.set);
     }
 
     public Set<Sudoku> unique() {
 	return set;
+    }
+
+    public List<Sudoku> all() {
+	return list;
     }
 }

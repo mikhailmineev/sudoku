@@ -2,9 +2,9 @@ package ru.mikhailmineev.sudoku.random;
 
 public class Normal extends AbstractRandom {
 
-    private long mean;
+    private double mean;
 
-    private long variance;
+    private double variance;
 
     private boolean ready = false;
 
@@ -20,7 +20,7 @@ public class Normal extends AbstractRandom {
     public double next() {
 	if (ready) {
 	    ready = false;
-	    return second;
+	    return second * variance + mean;
 	} else {
 	    double x;
 	    double y;
@@ -32,9 +32,29 @@ public class Normal extends AbstractRandom {
 	    } while (s > 1.0 || s == 0.0);
 
 	    double r = Math.sqrt(-2.0 * Math.log(s) / s);
-	    second = r * variance + mean;
+	    second = r * x;
 	    ready = true;
 	    return r * y * variance + mean;
 	}
+    }
+
+    @Override
+    public double next(double parameter1) {
+	mean = parameter1;
+	return next();
+    }
+
+    @Override
+    public double next(double parameter1, double parameter2) {
+	mean = parameter1;
+	variance = parameter2;
+	return next();
+    }
+
+    @Override
+    public double limits(long a, long b) {
+	double mean = (a + b) / 2.0;
+	double variance = (b - a) / 6.0;
+	return next(mean, variance);
     }
 }
